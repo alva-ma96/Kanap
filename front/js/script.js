@@ -1,13 +1,14 @@
     fetch("http://localhost:3000/api/products")
     .then(function(res) { //récupérer la réponse
       if (res.ok) { //si la réponse est ok
-        return res.json(); //alors on récupère la réponse et est formatée en json
+        return res.json(); //alors on récupère la réponse formatée en json
       }
     })
     .then(function(data) { //après on récupère les datas depuis res.json
 
-    afficherDiv()
-
+      data.forEach(element => afficherDiv(element)); //boucle for..each afin d'afficher tous les éléments du tableau.
+      //data est le tableau qui contient toutes les infos des produits. element représente les éléments du tableau et on appelle la fonction qui prend element en paramètre.
+      
 
     console.log(data)//les datas sont dispo jusqu'ici
     })
@@ -17,22 +18,16 @@
       console.log(err)
     });
 
+function afficherDiv(product){ //
+   let section = document.getElementById('items') //recherche de l'élément qui possède l'id items dans le DOM et on le stocke dans la variable section.
+   console.log(product)
 
-
-
-
-
-/*function afficherDiv(){
-   let section = document.getElementById('items')
-   console.log(section)
-
-   section.innerHTML += `<a href="./product.html?id=42">
+   //on ajoute du cintenu html dans la variable section en sélectionnant les éléments du tableau appropriés.
+   section.innerHTML += `<a href="./product.html?id=${product._id}">
    <article>
-     <img src=".../product01.jpg" alt="Lorem ipsum dolor sit amet, Kanap name1">
-     <h3 class="productName">Kanap name1</h3>
-     <p class="productDescription">Dis enim malesuada risus sapien gravida nulla nisl arcu. Dis enim malesuada risus sapien gravida nulla nisl arcu.</p>
+     <img src="${product.imageUrl}" alt="${product.altTxt}">
+     <h3 class="productName">${product.name}</h3>
+     <p class="productDescription">${product.description}</p>
    </article>
  </a>`
-}*/
-
-
+}
