@@ -6,7 +6,7 @@
     })
     .then(function(data) { //après on récupère les datas depuis res.json
 
-      data.forEach(element => afficherDiv(element)); //boucle for..each afin d'afficher tous les éléments du tableau.
+      data.forEach(element => afficherProduitsAccueil(element)); //boucle for..each afin d'afficher tous les éléments du tableau.
       //data est le tableau qui contient toutes les infos des produits. element représente les éléments du tableau et on appelle la fonction qui prend element en paramètre.
       
 
@@ -18,11 +18,11 @@
       console.log(err)
     });
 
-function afficherDiv(product){ //
+function afficherProduitsAccueil(product){
    let section = document.getElementById('items') //recherche de l'élément qui possède l'id items dans le DOM et on le stocke dans la variable section.
    console.log(product)
 
-   //on ajoute du cintenu html dans la variable section en sélectionnant les éléments du tableau appropriés.
+   //on ajoute du contenu html dans la variable section en sélectionnant les éléments du tableau appropriés.
    section.innerHTML += `<a href="./product.html?id=${product._id}">
    <article>
      <img src="${product.imageUrl}" alt="${product.altTxt}">
