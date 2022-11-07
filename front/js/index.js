@@ -1,7 +1,7 @@
     fetch("http://localhost:3000/api/products")
     .then(function(res) { //récupérer la réponse
       if (res.ok) { //si la réponse est ok
-        return res.json(); //alors on récupère la réponse formatée en json
+        return res.json(); //alors on retourne la réponse formatée en json
       }
     })
     .then(function(data) { //après on récupère les datas depuis res.json
