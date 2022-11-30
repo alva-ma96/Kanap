@@ -25,12 +25,12 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     return res.json();
   }
 })
+
 .then(function(data) {
 
   displayDataArticle(data) //appeler fonction pr afficher données du produit
   
 })
-
 
 .catch(function(err) {
   console.log(err)
@@ -84,9 +84,6 @@ function checkColorAndQuantity () {
 checkColorAndQuantity ()
 
 
-// initialiser le local storage avec un tableau vide
-
-
 function addToCart () {
 
   // récupérer LS pour voir son état et on le stocke dans une variable pour pouvoir le modifier après
@@ -112,7 +109,6 @@ function addToCart () {
 
       let indexProduct = myLocalStorage.findIndex((elt) => 
         elt.id === productId && elt.color === valueColor.value)
-        console.log("produit trouvé, index = ", indexProduct);
 
           if (indexProduct > -1) { //si index trouvé :
             // on met à jour la quantité
