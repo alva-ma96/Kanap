@@ -74,14 +74,17 @@ function displayProductsBasket(product) {
 }
 
 
+
 Promise.all(allPromises).then(() => {
 
   fullBasket.forEach(element => displayProductsBasket(element));
 
-  deleteSelectedProduct() // supprime un produit
+  deleteSelectedProduct(); // supprime un produit
 
-  calculateTotalPrice() //affiche le prix total
-  calculateTotalQuantity() // affiche le nbre total d'article dans le panier
+  calculateTotalPrice(); //affiche le prix total
+  calculateTotalQuantity(); // affiche le nbre total d'article dans le panier
+
+  modifyQuantity();
 
   //erreur lorsque le panier est vide : on ne peut pas commander
 
@@ -89,7 +92,8 @@ Promise.all(allPromises).then(() => {
 
 
 
-////////////////////// SUPPRIMER UN ARTICLE
+////////////////////// SUPPRIMER UN ARTICLE :
+
 const deleteSelectedProduct = () => {
 
   // sélectionner tous les boutons supprimer
@@ -109,10 +113,10 @@ const deleteSelectedProduct = () => {
       let matchIdAndColorInLS = productLS.find(element => element.id == closestId && element.color == closestColor);
 
       // Grâce à filter, on va garder/récupérer tous les produits qui ne correspondent pas en id et en couleur (matchIdAndColorInLS)
-      productLS = productLS.filter(element => element.id != matchIdAndColorInLS.id);
+      productLS = productLS.filter(element => element.id != matchIdAndColorInLS.id || element.color != matchIdAndColorInLS.color);
 
       // Il faut faire la même chose pour le fullBasket si non il n'est pas à jour
-      fullBasket = fullBasket.filter(element => element.id != matchIdAndColorInLS.id);
+      fullBasket = fullBasket.filter(element => element.id != matchIdAndColorInLS.id || element.color != matchIdAndColorInLS.color);
 
       // Il faut également mettre à jour le local storage du navigateur
       localStorage.setItem("myLocalStorage", JSON.stringify(productLS));
@@ -120,13 +124,16 @@ const deleteSelectedProduct = () => {
       // Enlever le produit du DOM
       e.target.closest('article').remove();
 
+      location.reload();
     })
 
   })
+
 }
 
 
-////////////////////// CALCUL TOTAL
+
+////////////////////// CALCUL TOTAL :
 
 // Déclarer une variable pour pouvoir y mettre les prix qui sont dans le panier
 let arrayPrice = []
@@ -184,3 +191,8 @@ function calculateTotalQuantity() {
 
 
 ///////////////////// MODIFIER QUANTITÉ
+function modifyQuantity() {
+  
+  document.querySelectorAll(".itemQuantity")
+  
+}
