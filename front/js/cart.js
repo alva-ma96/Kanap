@@ -78,10 +78,13 @@ Promise.all(allPromises).then(() => {
 
   fullBasket.forEach(element => displayProductsBasket(element));
 
-  deleteSelectedProduct()
+  deleteSelectedProduct() // supprime un produit
 
-  calculateTotalPrice()
-  calculateTotalQuantity()
+  calculateTotalPrice() //affiche le prix total
+  calculateTotalQuantity() // affiche le nbre total d'article dans le panier
+
+  //erreur lorsque le panier est vide : on ne peut pas commander
+
 })
 
 
@@ -117,7 +120,6 @@ const deleteSelectedProduct = () => {
       // Enlever le produit du DOM
       e.target.closest('article').remove();
 
-      //erreur lorsque le panier est vide : on ne peut pas commander
     })
 
   })
@@ -177,3 +179,8 @@ function calculateTotalQuantity() {
 //   document.getElementById("totalPrice").innerHTML = total
 //   document.getElementById("totalQuantity").innerHTML = quantity
 // }
+
+
+
+
+///////////////////// MODIFIER QUANTITÉ

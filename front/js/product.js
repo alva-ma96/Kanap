@@ -28,7 +28,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 
 .then(function(data) {
 
-  displayDataArticle(data) //appeler fonction pr afficher données du produit
+  displayDataArticle(data) //appeler fonction pr afficher données du produit 
   
 })
 
@@ -60,7 +60,7 @@ function checkColorAndQuantity () {
 
   cartButton.addEventListener("click", () => {
 
-    valueColor = document.getElementById("colors") // Pourquoi on ne peut pas enlever ces lignes d'ici ??
+    valueColor = document.getElementById("colors")
     valueQuantity = document.getElementById("quantity")
     redMessageColor.innerText = ""
     redMessageQuantity.innerText = ""
@@ -74,9 +74,10 @@ function checkColorAndQuantity () {
     }
 
     if (valueQuantity.value > 0 && valueQuantity.value < 100 && valueColor.value != "") { // Condition pour voir que tout est en ordre et ne pas ajouter au LS une quantité 0 par exemple
+    
+      addToCart();
 
-      addToCart()
-
+      alert("Votre article a bien été rajouté au panier");
     }
   })
 }
@@ -124,4 +125,6 @@ function addToCart () {
           
        }
 
+ 
  }
+
