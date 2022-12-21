@@ -1,4 +1,4 @@
-/////////////////// AFFICHER LES PRODUITS DANS LA PAGE PANIER :
+/////////////////// AFFICHER PRODUITS DANS LE PANIER : ////////////////////////
 
   // 1° récupérer les données du LS dans une variable
 let productLS = JSON.parse(localStorage.getItem("myLocalStorage"));
@@ -46,7 +46,7 @@ if (productLS !== null) { // si le LS contient des articles =>  afficher les don
     document.getElementById("cart__items").innerHTML += `Aucun produit dans le panier`
 }
 
-// 5° modifier le DOM
+// 5° Afficher les produits depuis le DOM
 function displayProductsBasket(product) {
 
   document.getElementById("cart__items").innerHTML += `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
@@ -74,17 +74,18 @@ function displayProductsBasket(product) {
 }
 
 
-
+// Ici on résoud toutes les promesses
 Promise.all(allPromises).then(() => {
 
   fullBasket.forEach(element => displayProductsBasket(element));
 
-  deleteSelectedProduct(); // supprime un produit
+  deleteSelectedProduct(); //supprime un produit
 
-  calculateTotalPrice(); //affiche le prix total
-  calculateTotalQuantity(); // affiche le nbre total d'article dans le panier
+  calculateTotalBasket(); //affiche le prix et quantité total dans le panier
 
-  modifyQuantity();
+  modifyQuantity(); //permet de modifier la quantité d'article ds le panier
+
+  errorMessageForm(); //ensemble des fonctions de messages d'erreur dans le formulaire
 
   //erreur lorsque le panier est vide : on ne peut pas commander
 
@@ -92,7 +93,7 @@ Promise.all(allPromises).then(() => {
 
 
 
-////////////////////// SUPPRIMER UN ARTICLE :
+////////////////////// SUPPRIMER UN ARTICLE ////////////////////////
 
 const deleteSelectedProduct = () => {
 
@@ -133,66 +134,239 @@ const deleteSelectedProduct = () => {
 
 
 
-////////////////////// CALCUL TOTAL :
+/////////////////////// CALCUL TOTAL //////////////////////////
 
 // Déclarer une variable pour pouvoir y mettre les prix qui sont dans le panier
-let arrayPrice = []
-let arrayQuantity = []
+// let arrayPrice = []
+// let arrayQuantity = []
 
-function calculateTotalPrice() {
+// function calculateTotalBasket() {
 
-  //récupérer les prix dans le panier
-  for (const product of fullBasket) {
+//   // récupérer les prix et quantités dans le panier
+//   for (const product of fullBasket) {
+    
+//     // et les pusher dans les tableaux vides
+//     arrayPrice.push(product.price);
+//     arrayQuantity.push(product.quantity);
 
-    //Mettre les prix dans le tableau
-    arrayPrice.push(product.price)
-  }
-
-  // Additionner les prix de arrayPrice avec reduce()
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
-  const totalPrice = arrayPrice.reduce(reducer, 0);
-
-  document.getElementById("totalPrice").innerHTML = totalPrice
-}
-
-function calculateTotalQuantity() {
-
-  //récupérer les quantités dans le panier
-  for (const product of fullBasket) {
-
-    // Mettre les quantités dans le tableau
-    arrayQuantity.push(product.quantity)
-  }
-
-    // Additionner les quantités de arrayQuantity avec reduce()
-    const reducer = (accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue);
-    const totalQuantity = arrayQuantity.reduce(reducer, 0);
-  
-    document.getElementById("totalQuantity").innerHTML = totalQuantity
-  
-}
-
-
-/////////////// Méthode Chloé Calcul Total
-// const calculTotal = () => {
-//   let total = 0;
-//   let quantity = 0;
-//   for (element of fullBasket) {
-//     total += parseInt(element.price) * parseInt(element.quantity)
-//     quantity += parseInt(element.quantity)
 //   }
 
-//   console.log(total);
-//   document.getElementById("totalPrice").innerHTML = total
-//   document.getElementById("totalQuantity").innerHTML = quantity
+//   //Additionner les résultats des tableaux avec reduce()
+//   const reducer = (accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue);
+
+//   const totalQuantity = arrayQuantity.reduce(reducer, 0);
+//   const totalPrice = arrayPrice.reduce(reducer, 0); // il faut mettre 0 en valeur initiale car si on appelle reduce() sur un tableau vide (qd le panier est vide) sans donner de valeur initiale, on aura une erreur.
+
+//   document.getElementById("totalPrice").innerHTML = totalPrice;
+//   document.getElementById("totalQuantity").innerHTML = totalQuantity;
+
 // }
 
 
+/////////////// Calcul Total (Chloé)
+function calculateTotalBasket () {
+
+  let totalPrice = 0;
+  let totalQuantity = 0;
+
+  // récupérer les prix et quantités dans le panier
+  for (element of fullBasket) {
+
+    // Additionner/Multiplier les résultats
+    totalPrice += parseInt(element.price) * parseInt(element.quantity)
+    totalQuantity += parseInt(element.quantity)
+
+  }
+
+  // Insérer dans le DOM
+  document.getElementById("totalPrice").innerHTML = totalPrice
+  document.getElementById("totalQuantity").innerHTML = totalQuantity
+
+}
 
 
-///////////////////// MODIFIER QUANTITÉ
-function modifyQuantity() {
+
+
+///////////////////// MODIFIER QUANTITÉ ////////////////////////
+
+function modifyQuantity () {
+
+  let modifyInput = document.querySelectorAll('.itemQuantity');
+
+  modifyInput.forEach((quantity) => {
+
+    quantity.addEventListener("change", (e) => {
+    
+
+      //Rechercher l'id le plus proche de là où on clique
+      let closestId = e.target.closest('article').getAttribute("data-id");
+
+      //Rechercher la couleur la plus proche de là où on clique
+      let closestColor = e.target.closest('article').getAttribute("data-color") 
+
+      // Rechercher le premier élément du tableau qui correspond à la condition ( => même id & même couleur)
+      let currProduct = productLS.findIndex(element => element.id == closestId && element.color == closestColor); 
+
+      // La quantité du produit ciblé(currProduct) est égal à la valeur que l'utilisateur vient d'écrire(e.target.value)
+      productLS[currProduct].quantity = e.target.value
+
+      // Aussi mettre à jour fullBasket et LS du navigateur
+      fullBasket[currProduct].quantity = e.target.value;
+      localStorage.setItem("myLocalStorage", JSON.stringify(productLS));
+
+      // Recalculer le total du panier
+      calculateTotalBasket();
+      
+    })
+
+  })
+
+}
+
+
+
+
+//////////////////////// FORMULAIRE ////////////////////////
+
+// 1° Contrôler que le formulaire est bien rempli
+
+// Sélectionner les valeur que l'utilisateur rempli et Comparer ces valeurs aux regex et envoyer un msg d'erreur si elles ne correspondent pas
+function checkFirstName() {
+
+  let firstName = document.getElementById("firstName").value
+
+  if (/^[A-Z][A-Za-z\é\è\ê\ï\-]+$/.test(firstName)) {
+    document.getElementById("firstNameErrorMsg").innerHTML = ""
+    return true;
+  }else{
+    document.getElementById("firstNameErrorMsg").innerHTML = "Veuillez entrer un prénom valide"
+    return false;
+  }
   
-  document.querySelectorAll(".itemQuantity")
+}
+
+function checkLastName() {
+
+  let lastName = document.getElementById("lastName").value
+
+  if (/^[A-Z][A-Za-z\é\è\ê\ï\-]+$/.test(lastName)) {
+    document.getElementById("lastNameErrorMsg").innerHTML = ""
+    return true;
+  }else{
+    document.getElementById("lastNameErrorMsg").innerHTML = "Veuillez entrer un nom valide"
+    return false;
+  }
+
+}
+
+function checkAddress() {
+
+  let address = document.getElementById("address").value
+
+  if (/^[A-zÀ-ú0-9 ,.'\-]+$/.test(address)) {
+    document.getElementById("cityErrorMsg").innerHTML = ""
+    return true;
+  }else{
+    document.getElementById("cityErrorMsg").innerHTML = "Veuillez entrer une ville valide"
+    return false;
+  }
+
+}
+
+function checkCity() {
+
+  let city = document.getElementById("city").value
+
+  if (/^[A-zÀ-ú0-9 ,.'\-]+$/.test(city)) {
+    document.getElementById("addressErrorMsg").innerHTML = ""
+    return true;
+  }else{
+    document.getElementById("addressErrorMsg").innerHTML = "Veuillez entrer une adresse valide"
+    return false;
+  }
+
+}
+
+function checkEmail() {
+
+  let email = document.getElementById("email").value
+
+  if (/^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$/.test(email)) {
+    document.getElementById("emailErrorMsg").innerHTML = ""
+    return true;
+  }else{
+    document.getElementById("emailErrorMsg").innerHTML = "Veuillez entrer une adresse mail valide"
+    return false;
+  }
+
+}
+
+//Rassembler toutes les fonctions en une seule
+function errorMessageForm() {
+
+  document.getElementById("order").addEventListener("click", (e) => {
+    
+    e.preventDefault();
+    checkFirstName();
+    checkLastName();
+    checkAddress();
+    checkCity();
+    checkEmail();
+    
+    // Si toutes les fonctions renvoient true => envoyer
+    if (checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail()) {
+      //envoyerlacommande
+      if (productLS !== null) {
+        sendOrder();
+      }else{
+        alert("Votre panier est vide, impossible de commander");
+      }
+    }
+  })
   
+}
+
+
+
+
+
+// 2° Constituer un objet contact et un tableau de produits    
+function sendOrder () {
+
+  let contact = {
+  firstName: document.getElementById("firstName").value,
+  lastName: document.getElementById("lastName").value,
+  address: document.getElementById("address").value,
+  city: document.getElementById("city").value,
+  email: document.getElementById("email").value
+  }
+
+  let products = []
+
+    for (const product of fullBasket) {
+      products.push(product.id)
+    }
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: { 
+    'Accept': 'application/json', 
+    'Content-Type': 'application/json' 
+    },
+      body: JSON.stringify({contact, products}) // ce qu'on va envoyer au serveur
+    })
+    .then(function(res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function(data) {
+          console.log(data);
+    })
+    
+    .catch(function(err) {
+      console.log(err)
+    });
+
+
 }
