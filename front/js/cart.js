@@ -3,11 +3,14 @@
   // 1° récupérer les données du LS dans une variable
 let productLS = JSON.parse(localStorage.getItem("myLocalStorage"));
 
+
   // 2° création du panier qu'on va remplir au fur et à mesure
 let fullBasket = []
 
+
   // 3° Création d'un tableau de promesses (afin de pouvoir les appeler quand on veut)
 let allPromises = []
+
 
 if (productLS !== null) { // si le LS contient des articles =>  afficher les données
     
@@ -15,11 +18,13 @@ if (productLS !== null) { // si le LS contient des articles =>  afficher les don
     
     // 4° récupérer les données de l'Api
       let promise = fetch(`http://localhost:3000/api/products/${product.id}`)
+
       .then(function(res) {
         if (res.ok) {
           return res.json();
         }
       })
+
       .then(function(data) {
       
           fullBasket.push({ // on push les données des produits dans le tableau
@@ -41,10 +46,11 @@ if (productLS !== null) { // si le LS contient des articles =>  afficher les don
       allPromises.push(promise) // on push le fetch dans le tableau de promesses
     }
 
-
 } else{ // si non, si le LS ne contient pas d'article => afficher "aucun produit"
     document.getElementById("cart__items").innerHTML += `Aucun produit dans le panier`
 }
+
+
 
 // 5° Afficher les produits depuis le DOM
 function displayProductsBasket(product) {
@@ -74,6 +80,8 @@ function displayProductsBasket(product) {
 }
 
 
+
+
 // Ici on résoud toutes les promesses
 Promise.all(allPromises).then(() => {
 
@@ -87,9 +95,8 @@ Promise.all(allPromises).then(() => {
 
   errorMessageForm(); //ensemble des fonctions de messages d'erreur dans le formulaire
 
-  //erreur lorsque le panier est vide : on ne peut pas commander
-
 })
+
 
 
 
@@ -102,6 +109,7 @@ const deleteSelectedProduct = () => {
 
   // event bouton supprimer
   deleteBtn.forEach(btn => {
+
     btn.addEventListener("click", (e) => {
 
       //Récupérer l'id du produit qu'on veut supprimer
@@ -134,36 +142,8 @@ const deleteSelectedProduct = () => {
 
 
 
+
 /////////////////////// CALCUL TOTAL //////////////////////////
-
-// Déclarer une variable pour pouvoir y mettre les prix qui sont dans le panier
-// let arrayPrice = []
-// let arrayQuantity = []
-
-// function calculateTotalBasket() {
-
-//   // récupérer les prix et quantités dans le panier
-//   for (const product of fullBasket) {
-    
-//     // et les pusher dans les tableaux vides
-//     arrayPrice.push(product.price);
-//     arrayQuantity.push(product.quantity);
-
-//   }
-
-//   //Additionner les résultats des tableaux avec reduce()
-//   const reducer = (accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue);
-
-//   const totalQuantity = arrayQuantity.reduce(reducer, 0);
-//   const totalPrice = arrayPrice.reduce(reducer, 0); // il faut mettre 0 en valeur initiale car si on appelle reduce() sur un tableau vide (qd le panier est vide) sans donner de valeur initiale, on aura une erreur.
-
-//   document.getElementById("totalPrice").innerHTML = totalPrice;
-//   document.getElementById("totalQuantity").innerHTML = totalQuantity;
-
-// }
-
-
-/////////////// Calcul Total (Chloé)
 function calculateTotalBasket () {
 
   let totalPrice = 0;
@@ -173,14 +153,14 @@ function calculateTotalBasket () {
   for (element of fullBasket) {
 
     // Additionner/Multiplier les résultats
-    totalPrice += parseInt(element.price) * parseInt(element.quantity)
-    totalQuantity += parseInt(element.quantity)
+    totalPrice += parseInt(element.price) * parseInt(element.quantity);
+    totalQuantity += parseInt(element.quantity);
 
   }
 
   // Insérer dans le DOM
-  document.getElementById("totalPrice").innerHTML = totalPrice
-  document.getElementById("totalQuantity").innerHTML = totalQuantity
+  document.getElementById("totalPrice").innerHTML = totalPrice;
+  document.getElementById("totalQuantity").innerHTML = totalQuantity;
 
 }
 
@@ -197,18 +177,17 @@ function modifyQuantity () {
 
     quantity.addEventListener("change", (e) => {
     
-
       //Rechercher l'id le plus proche de là où on clique
       let closestId = e.target.closest('article').getAttribute("data-id");
 
       //Rechercher la couleur la plus proche de là où on clique
-      let closestColor = e.target.closest('article').getAttribute("data-color") 
+      let closestColor = e.target.closest('article').getAttribute("data-color");
 
       // Rechercher le premier élément du tableau qui correspond à la condition ( => même id & même couleur)
       let currProduct = productLS.findIndex(element => element.id == closestId && element.color == closestColor); 
 
       // La quantité du produit ciblé(currProduct) est égal à la valeur que l'utilisateur vient d'écrire(e.target.value)
-      productLS[currProduct].quantity = e.target.value
+      productLS[currProduct].quantity = e.target.value;
 
       // Aussi mettre à jour fullBasket et LS du navigateur
       fullBasket[currProduct].quantity = e.target.value;
@@ -230,7 +209,7 @@ function modifyQuantity () {
 
 // 1° Contrôler que le formulaire est bien rempli
 
-// Sélectionner les valeur que l'utilisateur rempli et Comparer ces valeurs aux regex et envoyer un msg d'erreur si elles ne correspondent pas
+// Sélectionner les valeurs que l'utilisateur rempli et Comparer ces valeurs aux regex et envoyer un msg d'erreur si elles ne correspondent pas
 function checkFirstName() {
 
   let firstName = document.getElementById("firstName").value
@@ -263,11 +242,12 @@ function checkAddress() {
 
   let address = document.getElementById("address").value
 
-  if (/^[A-zÀ-ú0-9 ,.'\-]+$/.test(address)) {
-    document.getElementById("cityErrorMsg").innerHTML = ""
+  if (/^[A-Za-z0-9\s]{5,50}$/.test(address) && address !== " ") {
+    document.getElementById("addressErrorMsg").innerHTML = ""
+    console.log(address);
     return true;
   }else{
-    document.getElementById("cityErrorMsg").innerHTML = "Veuillez entrer une ville valide"
+    document.getElementById("addressErrorMsg").innerHTML = "Veuillez entrer une adresse valide"
     return false;
   }
 
@@ -277,11 +257,11 @@ function checkCity() {
 
   let city = document.getElementById("city").value
 
-  if (/^[A-zÀ-ú0-9 ,.'\-]+$/.test(city)) {
-    document.getElementById("addressErrorMsg").innerHTML = ""
+  if (/^[#.0-9a-zA-Z\S+,-]+$/.test(city)) {
+    document.getElementById("cityErrorMsg").innerHTML = ""
     return true;
   }else{
-    document.getElementById("addressErrorMsg").innerHTML = "Veuillez entrer une adresse valide"
+    document.getElementById("cityErrorMsg").innerHTML = "Veuillez entrer une ville valide"
     return false;
   }
 
@@ -315,17 +295,23 @@ function errorMessageForm() {
     
     // Si toutes les fonctions renvoient true => envoyer
     if (checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail()) {
-      //envoyerlacommande
-      if (productLS !== null) {
+
+      //envoyer la commande
+      if (productLS.length !== 0) {
+
         sendOrder();
-      }else{
+
+      }else if (productLS.length === 0){
+
         alert("Votre panier est vide, impossible de commander");
+
       }
+
     }
+
   })
   
 }
-
 
 
 
@@ -361,12 +347,12 @@ function sendOrder () {
       }
     })
     .then(function(data) {
-          console.log(data);
+      console.log(data.orderId); // nous retourne l'objet contact, le tableau produit et l'id de la commande
+      window.location.href = `confirmation.html?orderId=${data.orderId}`;
     })
     
     .catch(function(err) {
       console.log(err)
     });
-
 
 }
