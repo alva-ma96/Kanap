@@ -77,9 +77,8 @@ function checkColorAndQuantity () {
     
       addToCart();
 
-      document.querySelector(".item__content__addButton").innerHTML += `<div class="item__content__validMessage">
-      <p>Votre article a bien été rajouté au panier</p>
-      </div>`
+      alert("Votre article a bien été rajouté au panier")
+      
     }
   })
 }
